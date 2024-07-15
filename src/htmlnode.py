@@ -1,21 +1,3 @@
-from textnode import TextNode
-
-def text_node_to_html_node(text_node):
-    match text_node.text_type:
-        case "text":
-            return LeafNode(text_node.text)
-        case "bold":
-            return LeafNode(text_node.text, "b")
-        case "italic":
-            return LeafNode(text_node.text, "i")
-        case "code":
-            return LeafNode(text_node.text, "code")
-        case "link":
-            return LeafNode(text_node.text, "a", {"href": text_node.url})
-        case "image":
-            return LeafNode("", "img", {"src": text_node.url, "alt": text_node.text})
-    raise Exception("Invalid text node type")
-
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag

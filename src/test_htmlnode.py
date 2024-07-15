@@ -1,48 +1,6 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode, ParentNode, text_node_to_html_node
+from htmlnode import HTMLNode, LeafNode, ParentNode
 from textnode import TextNode
-
-class TestConversions(unittest.TestCase):
-    def test_text_to_html_node(self):
-        text_node = TextNode("hello world", "text")
-        expected = LeafNode("hello world") 
-        
-        self.assertEqual(text_node_to_html_node(text_node), expected)
-
-    def test_bold_to_html_node(self):
-        text_node = TextNode("hello world", "bold")
-        expected = LeafNode("hello world", "b") 
-        
-        self.assertEqual(text_node_to_html_node(text_node), expected)
-
-    def test_italic_to_html_node(self):
-        text_node = TextNode("hello world", "italic")
-        expected = LeafNode("hello world", "i") 
-        
-        self.assertEqual(text_node_to_html_node(text_node), expected)
-
-    def test_code_to_html_node(self):
-        text_node = TextNode("hello world", "code")
-        expected = LeafNode("hello world", "code") 
-        
-        self.assertEqual(text_node_to_html_node(text_node), expected)
-
-    def test_link_to_html_node(self):
-        text_node = TextNode("hello world", "link", "https://example.com")
-        expected = LeafNode("hello world", "a", {"href": "https://example.com"}) 
-        
-        self.assertEqual(text_node_to_html_node(text_node), expected)
-
-    def test_image_to_html_node(self):
-        text_node = TextNode("hello world", "image", "https://example.com")
-        expected = LeafNode("", "img", {"src": "https://example.com", "alt": "hello world"}) 
-        
-        self.assertEqual(text_node_to_html_node(text_node), expected)
-
-    def test_text_to_html_node_error(self):
-        text_node = TextNode("hello world", "nope")
-        
-        self.assertRaises(Exception, text_node_to_html_node, text_node) 
 
 class TestHTMLNode(unittest.TestCase):
     def test_eq_true(self):
