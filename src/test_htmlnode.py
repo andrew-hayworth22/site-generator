@@ -1,6 +1,5 @@
 import unittest
 from htmlnode import HTMLNode, LeafNode, ParentNode
-from textnode import TextNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_eq_true(self):
