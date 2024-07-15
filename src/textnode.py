@@ -1,5 +1,12 @@
 from htmlnode import LeafNode
 
+text_type_text = "text"
+text_type_bold = "bold"
+text_type_italic = "italic"
+text_type_code = "code"
+text_type_link = "link"
+text_type_image = "image"
+
 class TextNode:
     def __init__(self, text, text_type, url=None):
         self.text = text
@@ -17,19 +24,18 @@ class TextNode:
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
     
     def to_html_node(self):
-        match self.text_type:
-            case "text":
-                return LeafNode(self.text)
-            case "bold":
-                return LeafNode(self.text, "b")
-            case "italic":
-                return LeafNode(self.text, "i")
-            case "code":
-                return LeafNode(self.text, "code")
-            case "link":
-                return LeafNode(self.text, "a", {"href": self.url})
-            case "image":
-                return LeafNode("", "img", {"src": self.url, "alt": self.text})
+        if self.text_type == text_type_text:
+            return LeafNode(self.text)
+        if self.text_type == text_type_bold:
+            return LeafNode(self.text, "b")
+        if self.text_type == text_type_italic:
+            return LeafNode(self.text, "i")
+        if self.text_type == text_type_code:
+            return LeafNode(self.text, "code")
+        if self.text_type == "link":
+            return LeafNode(self.text, "a", {"href": self.url})
+        if self.text_type == "image":
+            return LeafNode("", "img", {"src": self.url, "alt": self.text})
         raise Exception("Invalid text node type")
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
