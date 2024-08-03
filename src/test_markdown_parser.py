@@ -2,6 +2,7 @@ import unittest
 from markdown_parser import (
     markdown_to_blocks,
     block_to_block_type,
+    markdown_to_html_node,
     block_type_paragraph,
     block_type_header,
     block_type_code,
@@ -9,6 +10,7 @@ from markdown_parser import (
     block_type_unordered_list,
     block_type_ordered_list
 )
+from htmlnode import HTMLNode, ParentNode, LeafNode
 
 class TestMarkdownToBlocks(unittest.TestCase):
     def test_new_line(self):
@@ -124,3 +126,104 @@ class TestBlockToBlockType(unittest.TestCase):
         expected = block_type_paragraph
 
         self.assertEqual(block_to_block_type(block), expected)
+
+class TestMarkdownToHTMLNodes(unittest.TestCase):
+    def test_all(self):
+        markdown = "hello world!\n\n# This is a header 1\n\n## Header 2 **IMPORTANT**\n\n### Header 3\n\n#### Header 4\n\n##### Header 5\n\n###### Header 6\n\n```let x = 1;\nlet y = 5;```\n\n> This\n> is a\n> *block quote*\n\n- Here are three items\n- Second\n- Third\n\n1. First\n2. Second\n3. Third"
+        expected = ParentNode("div", [
+            ParentNode("p", [
+                LeafNode("hello world!")
+            ]),
+            ParentNode("h1", [
+                LeafNode("This is a header 1")
+            ]),
+            ParentNode("h2", [
+                LeafNode("Header 2 "),
+                LeafNode("IMPORTANT", "b")
+            ]),
+            ParentNode("h3", [
+                LeafNode("Header 3")
+            ]),
+            ParentNode("h4", [
+                LeafNode("Header 4")
+            ]),
+            ParentNode("h5", [
+                LeafNode("Header 5")
+            ]),
+            ParentNode("h6", [
+                LeafNode("Header 6")
+            ]),
+            ParentNode("code", [
+                LeafNode("let x = 1;\nlet y = 5;")
+            ]),
+            ParentNode("blockquote", [
+                LeafNode("This\nis a\n"),
+                LeafNode("block quote", "i")
+            ]),
+            ParentNode("ul", [
+                ParentNode("li", [
+                    LeafNode("Here are three items")
+                ]),
+                ParentNode("li", [
+                    LeafNode("Second")
+                ]),
+                ParentNode("li", [
+                    LeafNode("Third")
+                ])
+            ]),
+            ParentNode("ol", [
+                ParentNode("li", [
+                    LeafNode("First")
+                ]),
+                ParentNode("li", [
+                    LeafNode("Second")
+                ]),
+                ParentNode("li", [
+                    LeafNode("Third")
+                ])
+            ])
+        ])
+
+        result = markdown_to_html_node(markdown)
+
+        self.assertEqual(result, expected)
+
+    def test_text_block(self):
+        markdown = "hello world!"
+        expected = ParentNode("div", [
+            ParentNode("p", [
+                LeafNode("hello world!")
+            ])
+        ])
+
+        result = markdown_to_html_node(markdown)
+
+        self.assertEqual(result, expected)
+
+    def test_headers(self):
+        markdown = "# This is a header 1\n\n## Header 2 **IMPORTANT**\n\n### Header 3\n\n#### Header 4\n\n##### Header 5\n\n###### Header 6"
+        expected = ParentNode("div", [
+            ParentNode("h1", [
+                LeafNode("This is a header 1")
+            ]),
+            ParentNode("h2", [
+                LeafNode("Header 2 "),
+                LeafNode("IMPORTANT", "b")
+            ]),
+            ParentNode("h3", [
+                LeafNode("Header 3")
+            ]),
+            ParentNode("h4", [
+                LeafNode("Header 4")
+            ]),
+            ParentNode("h5", [
+                LeafNode("Header 5")
+            ]),
+            ParentNode("h6", [
+                LeafNode("Header 6")
+            ])
+        ])
+
+        result = markdown_to_html_node(markdown)
+
+        self.assertEqual(result, expected)
