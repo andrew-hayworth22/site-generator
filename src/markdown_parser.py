@@ -20,7 +20,7 @@ def block_to_block_type(block):
         return block_type_code
     if re.match(r"^> .*?", block, re.MULTILINE):
         return block_type_quote
-    if re.match(r"^- .*?", block, re.MULTILINE):
+    if re.match(r"^\* .*?", block, re.MULTILINE):
         return block_type_unordered_list
     if re.match(r"^\d+\. .*?", block):
         return block_type_ordered_list
@@ -54,7 +54,7 @@ def create_quote_node(block):
 
 def create_unordered_list_node(block):
     split_block = block.split("\n")
-    removed_start = list(map(lambda x: re.findall(r"^- (.*)", x, re.DOTALL)[0], split_block))
+    removed_start = list(map(lambda x: re.findall(r"^\* (.*)", x, re.DOTALL)[0], split_block))
     children = list(map(lambda x: ParentNode("li", text_to_children(x)), removed_start))
     return ParentNode("ul", children)
 
@@ -85,3 +85,10 @@ def markdown_to_html_node(markdown):
             children_nodes.append(create_ordered_list_node(block))
 
     return ParentNode("div", children_nodes)
+
+def extract_title(markdown):
+    title = re.findall("# (.*)", markdown)
+    if len(title) == 0:
+        raise Exception("No title found in markdown")
+    
+    return title[0]

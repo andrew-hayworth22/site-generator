@@ -3,6 +3,7 @@ from markdown_parser import (
     markdown_to_blocks,
     block_to_block_type,
     markdown_to_html_node,
+    extract_title,
     block_type_paragraph,
     block_type_header,
     block_type_code,
@@ -92,17 +93,17 @@ class TestBlockToBlockType(unittest.TestCase):
 
         self.assertEqual(block_to_block_type(block), expected)
     def test_unordered_list(self):
-        block = "- this is an unordered list item"
+        block = "* this is an unordered list item"
         expected = block_type_unordered_list
 
         self.assertEqual(block_to_block_type(block), expected)
     def test_unordered_list_multiline(self):
-        block = "- this is an unordered list item\n- this is the next item"
+        block = "* this is an unordered list item\n* this is the next item"
         expected = block_type_unordered_list
 
         self.assertEqual(block_to_block_type(block), expected)
     def test_malformed_unordered_list_is_paragraph(self):
-        block = "-this is an unordered list item\n- this is the next item"
+        block = "*this is an unordered list item\n* this is the next item"
         expected = block_type_paragraph
 
         self.assertEqual(block_to_block_type(block), expected)
@@ -129,7 +130,7 @@ class TestBlockToBlockType(unittest.TestCase):
 
 class TestMarkdownToHTMLNodes(unittest.TestCase):
     def test_all(self):
-        markdown = "hello world!\n\n# This is a header 1\n\n## Header 2 **IMPORTANT**\n\n### Header 3\n\n#### Header 4\n\n##### Header 5\n\n###### Header 6\n\n```let x = 1;\nlet y = 5;```\n\n> This\n> is a\n> *block quote*\n\n- Here are three items\n- Second\n- Third\n\n1. First\n2. Second\n3. Third"
+        markdown = "hello world!\n\n# This is a header 1\n\n## Header 2 **IMPORTANT**\n\n### Header 3\n\n#### Header 4\n\n##### Header 5\n\n###### Header 6\n\n```let x = 1;\nlet y = 5;```\n\n> This\n> is a\n> *block quote*\n\n* Here are three items\n* Second\n* Third\n\n1. First\n2. Second\n3. Third"
         expected = ParentNode("div", [
             ParentNode("p", [
                 LeafNode("hello world!")
@@ -226,4 +227,26 @@ class TestMarkdownToHTMLNodes(unittest.TestCase):
 
         result = markdown_to_html_node(markdown)
 
+        self.assertEqual(result, expected)
+
+class TestExtractTitle(unittest.TestCase):
+    def test_one_title(self):
+        markdown = "# Title"
+        expected = "Title"
+
+        result = extract_title(markdown)
+        self.assertEqual(result, expected)
+
+    def test_multiple_titles(self):
+        markdown = "# Title One\n\n# Title 2"
+        expected = "Title One"
+
+        result = extract_title(markdown)
+        self.assertEqual(result, expected)
+    
+    def test_title_in_doc(self):
+        markdown = "Here is some pretext!!\n\n# Title One\n\n# Title 2"
+        expected = "Title One"
+
+        result = extract_title(markdown)
         self.assertEqual(result, expected)
