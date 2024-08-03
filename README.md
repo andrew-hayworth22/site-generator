@@ -1,6 +1,8 @@
 # Site Generator
 A tool used to convert markdown files to webpages built for the Boot.dev curriculum
 
+![Test status](https://github.com/andrew-hayworth22/site-generator/actions/workflows/tests.yml/badge.svg)
+
 ## Running the generator
 To run the test suite, run:
 ```./test.sh```
